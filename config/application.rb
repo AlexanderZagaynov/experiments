@@ -20,5 +20,10 @@ module PracticeAWS
 
     config.active_record.raise_in_transactional_callbacks = true
 
+    console do
+      require 'awesome_print'
+      AwesomePrint.irb!
+    end
+
   end
 end

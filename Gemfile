@@ -26,6 +26,9 @@ gem 'therubyracer', platforms: :ruby
 # Service provider tools
 gem 'aws-sdk'
 
+# Core extensions
+gem 'awesome_print', require: false
+
 # Deployment tools
 gem 'capistrano-rails', group: :development
 
