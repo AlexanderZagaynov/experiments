@@ -22,3 +22,6 @@
 # Ignore dotenv ENV secrets
 /.env.production
 /.env.local
+
+# Ignore byebug history
+/.byebug_history

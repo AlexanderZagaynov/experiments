@@ -51,6 +51,7 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     builder (3.2.2)
+    byebug (8.2.1)
     capistrano (3.4.0)
       i18n
       rake (>= 10.0.0)
@@ -209,6 +210,7 @@ DEPENDENCIES
   awesome_print
   aws-sdk
   bootstrap-sass
+  byebug
   capistrano-rails
   coffee-rails
   dotenv-rails

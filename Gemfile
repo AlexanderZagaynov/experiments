@@ -38,6 +38,7 @@ end
 
 group :development do
   gem 'spring'
+  gem 'byebug'
   gem 'web-console'
 end
 
