@@ -11,7 +11,7 @@ require 'sprockets/railtie'
 
 Bundler.require *Rails.groups
 
-module Fallacymania
+module PracticeAWS
   class Application < Rails::Application
 
     config.generators.assets = false
