@@ -3,6 +3,9 @@ ruby File.read('.ruby-version').gsub(/[[:space:]]+/, '')
 
 gem 'rails', '~> 4.2.5'
 
+# ENV secrets
+gem 'dotenv-rails', require: 'dotenv/rails-now'
+
 # Database adapters
 gem 'sqlite3'
 

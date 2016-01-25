@@ -18,3 +18,7 @@
 
 # Ignore Sprockets-compiled assets
 /public/assets
+
+# Ignore dotenv ENV secrets
+/.env.production
+/.env.local
