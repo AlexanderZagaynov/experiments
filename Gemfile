@@ -20,6 +20,9 @@ gem 'jquery-rails'
 gem 'uglifier'
 gem 'therubyracer', platforms: :ruby
 
+# Service provider tools
+gem 'aws-sdk'
+
 # Deployment tools
 gem 'capistrano-rails', group: :development
 
