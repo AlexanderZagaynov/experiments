@@ -14,7 +14,7 @@ Bundler.require *Rails.groups
 module PracticeAWS
   class Application < Rails::Application
 
-    Dir.glob(Rails.root.join 'lib/patches/**/*.rb').each { |file| require file }
+    require_patches 'rails'
 
     config.generators.assets = false
     config.generators.helper = false

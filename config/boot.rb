@@ -1,3 +1,4 @@
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+require_relative '../lib/patches/core'
 
-require 'bundler/setup' # Set up gems listed in the Gemfile.
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path '../../Gemfile', __FILE__
+require 'bundler/setup'
