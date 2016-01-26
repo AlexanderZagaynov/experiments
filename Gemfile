@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 ruby File.read('.ruby-version').gsub(/[[:space:]]+/, '')
 
-gem 'rails', '~> 4.2.5'
+gem 'rails', '~> 4.2'
 
 # ENV secrets
 gem 'dotenv-rails', require: 'dotenv/rails-now'
