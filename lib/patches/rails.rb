@@ -1,2 +1,2 @@
-using Kernel::Patches
+using Refinements::RequirePatch
 require_patch 'application'

@@ -1,4 +1,11 @@
+module Refinements; end
 require_relative 'core/patches'
 
-using Kernel::Patches
-require_patch 'prepend'
+using Refinements::RequirePatch
+%w(
+  prepend
+  empties
+  numeric
+  ergo
+  require
+).each { |name| require_patch name }
