@@ -8,6 +8,13 @@ module Rake::Patches::DSL
   #   raise e
   end
 
+  def hide name
+    task_name = Rake.application.current_scope.path_with_task_name name
+    if Rake::TaskManager.record_task_metadata && Rake::Task.task_defined?(task_name)
+      Rake::Task[task_name].clear_comments
+    end
+  end
+
 end
 
 # ObjectSpace.each_object(Rake::DSL) { |object| object.extend Rake::Patches::DSL }
