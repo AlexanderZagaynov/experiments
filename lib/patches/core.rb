@@ -1,11 +1,11 @@
-module Refinements; end
-require_relative 'core/patches'
-
-using Refinements::RequirePatch
+base = File.basename __FILE__, '.*'
 %w(
+
+  setup
+  patches
   prepend
   empties
   numeric
   ergo
-  require
-).each { |name| require_patch name }
+
+).each { |path| require_relative "#{base}/#{path}" }
