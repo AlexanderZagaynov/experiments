@@ -6,6 +6,7 @@ base = File.basename __FILE__, '.*'
   prepend
   empties
   numeric
+  file
   ergo
 
 ).each { |path| require_relative "#{base}/#{path}" }
