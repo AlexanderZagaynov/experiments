@@ -15,6 +15,7 @@ module PracticeAWS
   class Application < Rails::Application
 
     require_patches 'rails'
+    require_patches 'aws'
 
     config.generators.assets = false
     config.generators.helper = false
