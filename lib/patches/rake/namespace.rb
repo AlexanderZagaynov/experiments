@@ -50,7 +50,8 @@ class Rake::Patches::NameSpace
       arg_names, deps = data
 
       task_manager.tasks_in_scope(scope).each do |task|
-        task.instance_variable_set :@prerequisites, deps | task.prerequisites
+        task_deps = deps.reject { |pre| task == task.send(:lookup_prerequisite, pre) }
+        task.instance_variable_set :@prerequisites, task_deps | task.prerequisites
         task.set_arg_names arg_names unless arg_names.empty?
       end
     end
