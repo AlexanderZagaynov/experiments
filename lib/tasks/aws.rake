@@ -1,5 +1,5 @@
 namespace aws: :initialize do
-  task aws: :list
+  task aws: :describe
 
   task :initialize do
     require 'awesome_print'
@@ -11,122 +11,103 @@ namespace aws: :initialize do
       @client ||= Aws::CloudFormation::Client.new
     end
 
-    def list
-      @list ||= client.list_stacks
+    def existing
+      @existing ||= describe_stacks[:stacks].map(&:stack_name)
     end
 
-    def stacks
-      unless defined? @stacks
-        stacks = configs.delete('stacks')
-        stacks.deep_merge! stacks.delete(:top)
+    def list_stacks
+      @list_stacks ||= client.list_stacks
+    end
 
-        stacks.each do |name, stack|
+    def describe_stacks
+      @describe_stacks ||= client.describe_stacks
+    end
 
-          template = {}
-          template.merge! stack.delete('template')
-          template.merge! template.delete(:top) || {}
+    def stack
+      unless defined? @stack
+        resources = configs.delete!(:resources)
 
-          resources = {}
-          resources.merge! stack.delete('resources')
-          resources.merge! resources.delete(:top) || {}
+        instances = configs.delete!(:instances)
+        instances.each do |name, instance|
 
-          instances = {}
-          instances.merge! resources.delete('instances')
+          properties = instance.delete!(:properties)
+          properties['ImageId'] = instance.delete!(:image)
 
-          instances.each do |name, instance|
+          instance['Type'] = 'AWS::EC2::Instance'
+          instance['Properties'] = properties
 
-            properties = instance['Properties'] ||= {}
-            properties.merge! instance.delete(:top) || {}
-
-            properties.natural!
-            properties['ImageId'] ||= properties.delete('image')
-
-            instance.natural!
-            instance['Type'] = 'AWS::EC2::Instance'
-            instance['Properties'] = properties
-
-            resources[name] = instance
-          end
-
-          template['Resources'] = resources
-
-          stack.natural!
-          stack[:stack_name] ||= name
-          stack[:template_body] = template.to_json
+          resources[name] = instance
 
         end
 
-        @stacks = stacks.natural!.values
+        template = configs.delete!(:template)
+        template['Description'] = template.delete!(:description)
+        template['Resources']   = resources
+
+        stack = configs.delete!(:stack)
+        stack[:stack_name] = stack.delete!(:name)
+        stack[:template_body] = template.to_json
+
+        @stack = stack.natural!
       end
-      @stacks
+      @stack
     end
 
     def configs
       unless defined? @configs
-        configs = Hash.of_hashes
+        configs = ActiveSupport::HashWithIndifferentAccess.of_hashes
 
         base = Pathname.new(__dir__) / '..' / 'devops' / 'aws'
-        base.glob('**', "*{#{File::SEPARATOR},.yml}").each do |path|
+        Pathname.glob(base / '**' / '*.yml').each do |path|
 
-          parts = path.relative_path_from(base).each_filename.to_a
-          parts.pop if path.file?
-
-          branch = parts.empty? ? configs : configs.dig(*parts)
-
-          next unless path.file?
           filename = path.to_path
-
-          erb = ERB.new path.read # 'r:bom|utf-8'
+          erb = ERB.new path.read mode: 'r:bom|utf-8'
           erb.filename = filename
-
           config = YAML.load erb.result, filename
-          branch[path.barename.to_path][:top] = config if config
+          next unless config
+
+          parts  = path.relative_path_from(base).each_filename.to_a[0..-2]
+          branch = parts.inject(configs) { |branch, part| branch[part] }
+          branch[path.barename.to_path] = config
 
         end
-        @configs = configs
+        @configs = configs.of_hashes!
       end
       @configs
     end
 
     # ap configs
-    # ap stacks
+    # ap stack
   end
 
   desc 'List AWS stacks'
   task :list do
-    ap list
+    ap list_stacks
   end
 
   desc 'Describe AWS stacks'
   task :describe do
-    ap client.describe_stacks
+    ap describe_stacks
   end
 
   desc 'Validate AWS stack templates'
   task :validate do
-    stacks.each do |stack|
-      ap client.validate_template stack.slice :template_body
-    end
+    ap client.validate_template stack.slice :template_body
   end
 
   desc 'Create / Update AWS stacks'
   task :apply do
-    existing = list[:stack_summaries].map { |stack| stack[:stack_name] }
-    stacks.each do |stack|
-      result =
-        if existing.include? stack[:stack_name]
-          client.update_stack stack
-        else
-          client.create_stack stack
-        end
-      ap result
-    end
+    result =
+      if existing.include? stack[:stack_name]
+        client.update_stack stack
+      else
+        client.create_stack stack
+      end
+    ap result
   end
 
   desc 'Delete AWS stacks'
   task :delete do
-    stacks.each do |stack|
-      ap client.delete_stack stack.slice :stack_name
-    end
+    ap client.delete_stack stack.slice :stack_name
   end
 end

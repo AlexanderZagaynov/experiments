@@ -7,6 +7,10 @@ module Patches
     const(:ClassMethods).tap { |mod| base.singleton_class.prepend mod if mod }
   end
 
+  # def prepended base
+  #   const(:ClassMethods).tap { |mod| base.singleton_class.prepend mod if mod }
+  # end
+
   def class_methods
     # raise ArgumentError, 'Missing block' unless block_given?
     const(:ClassMethods, create: true).tap { |mod| mod.module_eval &Proc.new }
