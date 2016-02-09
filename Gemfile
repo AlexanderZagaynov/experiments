@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby File.read('.ruby-version').gsub(/[[:space:]]+/, '')
+ruby File.read('.ruby-version').chomp
 
 gem 'rails', '~> 4.2.5'
 
